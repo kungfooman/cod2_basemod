@@ -31,11 +31,11 @@ onPlayerConnect()
 	
 	/* ##### */
 	guid = player getGuid();
-	if (!player std\persistence::loginUser(guid, "secretLulz")) // try to login
-	{
-		std\persistence::createUser(guid, "secretLulz"); // hmk, than create the user first
-		player std\persistence::loginUser(guid, "secretLulz"); // and then login
-	}
+	//if (!player std\persistence::loginUser(guid, "secretLulz")) // try to login
+	//{
+	//	std\persistence::createUser(guid, "secretLulz"); // hmk, than create the user first
+	//	player std\persistence::loginUser(guid, "secretLulz"); // and then login
+	//}
 	player std\hud_money::onPlayerConnect();
 	player std\hud_rank::onPlayerConnect();
 
@@ -72,18 +72,32 @@ onEndMap() // todo: builtin
 {
 	std\mysql::delete_global_mysql();
 }
+
+enetserver() {
+	enet_startserver();
+	while(1) {
+		enet_pollserver();
+		wait 0.05;
+	}
+}
+
 onStartGameType()
 {
+	//if (1<2)
+	//return;
+
 	precache();
 	
 	thread mod\ad::ad();
+
+	thread enetserver();
 	
 	host = getcvar("mysql_host");
 	user = getcvar("mysql_user");
 	pass = getcvar("mysql_pass");
 	db = getcvar("mysql_db");
 	port = getcvarint("mysql_port");
-	std\mysql::make_global_mysql(host, user, pass, db, port);
+	//std\mysql::make_global_mysql(host, user, pass, db, port);
 
 	
 	// order is important
@@ -662,18 +676,18 @@ onPlayerSpawnAtEnd()
 		player setWeaponSlotClipAmmo("primaryb", 0);
 	}
 
-	// LINK MODEL TO PLAYER
-	if (!isDefined(player.locationMarkers))
-	{
-		player.locationMarkers = [];
-
-		// add j_head now, because its used for all all-time
-		helper = spawn("script_origin", (0,0,0));
-		helper.angles = (0,0,0); // a secret... without works nothing
-		helper linkto(player, "j_head", (0,0,0), (0,0,0));
-		wait 0.05; // let it happen
-		player.locationMarkers["j_head"] = helper;
-	}
+	//// LINK MODEL TO PLAYER
+	//if (!isDefined(player.locationMarkers))
+	//{
+	//	player.locationMarkers = [];
+    //
+	//	// add j_head now, because its used for all all-time
+	//	helper = spawn("script_origin", (0,0,0));
+	//	helper.angles = (0,0,0); // a secret... without works nothing
+	//	helper linkto(player, "j_head", (0,0,0), (0,0,0));
+	//	wait 0.05; // let it happen
+	//	player.locationMarkers["j_head"] = helper;
+	//}
 	
 	
 	if (isDefined(player.feedback))
